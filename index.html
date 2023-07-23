@@ -1,12 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/style.css">
     <title>Vite + TS</title>
   </head>
   <body>
+    <div class="cheerathon-container">
+      <div class="counter">
+        <span class="text">Temps restants</span>
+        <div class="time-container">
+          <div class="hours"></div>
+          :
+          <div class="minutes"></div>
+          :
+          <div class="seconds"></div>
+        </div>
+      </div>
+      <div class="notification">
+        <span class="notification-message">1500 bits offerts par Micheldu33</span>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
