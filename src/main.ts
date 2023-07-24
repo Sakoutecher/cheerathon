@@ -1,7 +1,7 @@
 const hoursShow = document.querySelector('.hours');
 const minutesShow = document.querySelector('.minutes');
 const secondsShow = document.querySelector('.seconds');
-const notificationMessage = document.querySelector('.notification-message');
+//const notificationMessage = document.querySelector('.notification-message');
 
 let hours = '';
 let minutes = '';
