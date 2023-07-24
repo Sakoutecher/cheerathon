@@ -1,7 +1,8 @@
 const hoursShow = document.querySelector('.hours');
 const minutesShow = document.querySelector('.minutes');
 const secondsShow = document.querySelector('.seconds');
-//const notificationMessage = document.querySelector('.notification-message');
+const notificationMessage = document.querySelector('.notification-message');
+const notification = document.querySelector('#notification') as HTMLElement;
 
 let hours = '';
 let minutes = '';
@@ -32,23 +33,17 @@ const client = new tmi.Client({
 
 client.connect();
 
-client.on('cheer', (channel, userstate, message) => {
-  console.log(channel, userstate, message);
+client.on('cheer', (channel, userstate) => {
+  console.log(channel["display-name"]);
   console.log(userstate.bits);
   console.log('ici')
-});
-
-client.on('message', (channel, user, message, fromSelf) => {
-  if(user.bits) {
-      console.log(user.bits);
-      console.log(user, message, fromSelf, channel)
-      console.log('la')
-  }
-});
-
-client.on('message', (_channel, tags, message, _self) => {
-  console.log(tags, message)
-  console.log('puis ici')
+  notificationMessage.innerHTML = `${userstate.bits} bits offerts par ${channel["display-name"]}`
+  notification.style.transform = 'translateY(0)';
+  notification.style.opacity = '1';
+  setTimeout(() => {
+    notification.style.transform = 'translateY(50%)';
+    notification.style.opacity = '0';
+  }, 5000);
 });
 
 // Rajoute un zéro avant le nombre si il est inférieur à 10
