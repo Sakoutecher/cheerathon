@@ -3,10 +3,41 @@ const minutesShow = document.querySelector('.minutes');
 const secondsShow = document.querySelector('.seconds');
 const notificationMessage = document.querySelector('.notification-message');
 
-let hours = '15';
-let minutes = '23';
-let seconds = '45';
+let hours = '';
+let minutes = '';
+let seconds = '';
 
+// Récupère les valeurs dans le localStorage
+if (localStorage.getItem('hours') === null) {
+  hours = '23';
+} else {
+  hours = localStorage.getItem('hours');
+}
+if (localStorage.getItem('minutes') === null) {
+  minutes = '59';
+} else {
+  minutes = localStorage.getItem('minutes');
+}
+if (localStorage.getItem('seconds') === null) {
+  seconds = '59';
+} else {
+  seconds = localStorage.getItem('seconds');
+}
+
+import tmi from 'tmi.js';
+
+const client = new tmi.Client({
+	channels: [ 'rhobalas_lol' ]
+});
+
+client.connect();
+
+client.on('cheer', (channel, userstate, message) => {
+  console.log(channel, userstate, message);
+  console.log(userstate.bits);
+});
+
+// Rajoute un zéro avant le nombre si il est inférieur à 10
 const addZero = (value: number | string) => {
   if (typeof value === 'number') {
     value = value.toString(); // Convertit le nombre en chaîne de caractères
@@ -17,6 +48,7 @@ const addZero = (value: number | string) => {
   return value;
 };
 
+// Function qui décrémente le temps et qui change les autres valeurs en fonction des conditions présentes dans la fonction
 const timer = () => {
   seconds = (parseInt(seconds) - 1).toString();
   if (parseInt(seconds) < 0) {
@@ -32,11 +64,15 @@ const timer = () => {
   seconds = addZero(seconds);
 };
 
+// Function qui affiche le temps et qui le stop quand on arrive à 0
 const showTime = () => {
   timer();
   hoursShow.innerHTML = hours;
   minutesShow.innerHTML = minutes;
   secondsShow.innerHTML = seconds;
+  localStorage.setItem('hours', hours);
+  localStorage.setItem('minutes', minutes);
+  localStorage.setItem('seconds', seconds);
   if (parseInt(hours) <= 0 && parseInt(minutes) <= 0 && parseInt(seconds) <= 0) {
     clearInterval(intervalId);
   }
