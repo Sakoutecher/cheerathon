@@ -27,7 +27,7 @@ if (localStorage.getItem('seconds') === null) {
 import tmi from 'tmi.js';
 
 const client = new tmi.Client({
-	channels: [ 'rhobalas_lol' ]
+	channels: [ 'ponce' ]
 });
 
 client.connect();
@@ -35,6 +35,20 @@ client.connect();
 client.on('cheer', (channel, userstate, message) => {
   console.log(channel, userstate, message);
   console.log(userstate.bits);
+  console.log('ici')
+});
+
+client.on('message', (channel, user, message, fromSelf) => {
+  if(user.bits) {
+      console.log(user.bits);
+      console.log(user, message, fromSelf, channel)
+      console.log('la')
+  }
+});
+
+client.on('message', (_channel, tags, message, _self) => {
+  console.log(tags, message)
+  console.log('puis ici')
 });
 
 // Rajoute un zéro avant le nombre si il est inférieur à 10
