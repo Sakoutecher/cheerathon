@@ -2,7 +2,8 @@ const hoursShow = document.querySelector('.hours');
 const minutesShow = document.querySelector('.minutes');
 const secondsShow = document.querySelector('.seconds');
 const notificationMessage = document.querySelector('.notification-message');
-const notification = document.querySelector('#notification') as HTMLElement;
+const notification = document.querySelector('.notification') as HTMLElement;
+const cheerathonContainer = document.querySelector('.cheerathon-container') as HTMLElement;
 
 let hours = '';
 let minutes = '';
@@ -85,29 +86,90 @@ const client = new tmi.Client({
 client.connect();
 
 client.on('cheer', (_channel, userstate) => {
-  let addedTime = calcBits(tempsInitial, userstate.bits).split(':');
-  hours = (parseInt(hours) + parseInt(removeLeadingZero(addedTime[0]))).toString();
-  minutes = (parseInt(minutes) + parseInt(removeLeadingZero(addedTime[1]))).toString();
-  if (parseInt(minutes) > 59) {
-    minutes = (parseInt(minutes) - 60).toString();
-    hours = (parseInt(hours) + 1).toString();
+  if (localStorage.getItem(`${userstate["display-name"]}`) === null) {
+    localStorage.setItem(`${userstate["display-name"]}`, `${userstate["display-name"]} - ${userstate.bits}`);
+  } else if (localStorage.getItem(`${userstate["display-name"]}`) !== null) {
+    localStorage.setItem(`${userstate["display-name"]}-1`, `${userstate["display-name"]} - ${userstate.bits}`);
+  } else if (localStorage.getItem(`${userstate["display-name"]}-1`) !== null) {
+    localStorage.setItem(`${userstate["display-name"]}-2`, `${userstate["display-name"]} - ${userstate.bits}`);
+  } else if (localStorage.getItem(`${userstate["display-name"]}-2`) !== null) {
+    localStorage.setItem(`${userstate["display-name"]}-3`, `${userstate["display-name"]} - ${userstate.bits}`);
+  } else if (localStorage.getItem(`${userstate["display-name"]}-3`) !== null) {
+    localStorage.setItem(`${userstate["display-name"]}-4`, `${userstate["display-name"]} - ${userstate.bits}`);
+  }else if (localStorage.getItem(`${userstate["display-name"]}-4`) !== null) {
+    localStorage.setItem(`${userstate["display-name"]}-5`, `${userstate["display-name"]} - ${userstate.bits}`);
+  } else if (localStorage.getItem(`${userstate["display-name"]}-5`) !== null) {
+    localStorage.setItem(`${userstate["display-name"]}-6`, `${userstate["display-name"]} - ${userstate.bits}`);
   }
-  seconds = (parseInt(seconds) + parseInt(removeLeadingZero(addedTime[2]))).toString();
-  if (parseInt(seconds) > 59) {
-    seconds = (parseInt(seconds) - 60).toString();
-    minutes = (parseInt(minutes) + 1).toString();
-  }
-  notificationMessage.innerHTML = `${userstate.bits} bits offerts par ${userstate["display-name"]}`
-  notification.style.transform = 'translateY(0)';
-  notification.style.opacity = '1';
-  setTimeout(() => {
-    notificationMessage.innerHTML = `+ ${calcBits(tempsInitial, userstate.bits)}`
-  }, 3000)
-  setTimeout(() => {
-    notification.style.transform = 'translateY(50%)';
-    notification.style.opacity = '0';
-  }, 7000);
+  // let addedTime = calcBits(tempsInitial, userstate.bits).split(':');
+  // hours = (parseInt(hours) + parseInt(removeLeadingZero(addedTime[0]))).toString();
+  // minutes = (parseInt(minutes) + parseInt(removeLeadingZero(addedTime[1]))).toString();
+  // if (parseInt(minutes) > 59) {
+  //   minutes = (parseInt(minutes) - 60).toString();
+  //   hours = (parseInt(hours) + 1).toString();
+  // }
+  // seconds = (parseInt(seconds) + parseInt(removeLeadingZero(addedTime[2]))).toString();
+  // if (parseInt(seconds) > 59) {
+  //   seconds = (parseInt(seconds) - 60).toString();
+  //   minutes = (parseInt(minutes) + 1).toString();
+  // }
+  // notificationMessage.innerHTML = `${userstate.bits} bits offerts par ${userstate["display-name"]}`
+  // notification.style.transform = 'translateY(0)';
+  // notification.style.opacity = '1';
+  // setTimeout(() => {
+  //   notificationMessage.innerHTML = `+ ${calcBits(tempsInitial, userstate.bits)}`
+  // }, 3000)
+  // setTimeout(() => {
+  //   notification.style.transform = 'translateY(50%)';
+  //   notification.style.opacity = '0';
+  // }, 7000);
 });
+
+const verifNewBits = async () => {
+  for (var key in localStorage) {
+    if (key !== 'hours' && key !== 'minutes' && key !== 'seconds') {
+      if (localStorage.hasOwnProperty(key)) {
+        let value = localStorage.getItem(key);
+        let userstate = {
+          "display-name": key,
+          bits: value.split(' - ')[1]
+        };
+        let addedTime = calcBits(tempsInitial, userstate.bits).split(':');
+        hours = (parseInt(hours) + parseInt(removeLeadingZero(addedTime[0]))).toString();
+        minutes = (parseInt(minutes) + parseInt(removeLeadingZero(addedTime[1]))).toString();
+        if (parseInt(minutes) > 59) {
+          minutes = (parseInt(minutes) - 60).toString();
+          hours = (parseInt(hours) + 1).toString();
+        }
+        seconds = (parseInt(seconds) + parseInt(removeLeadingZero(addedTime[2]))).toString();
+        if (parseInt(seconds) > 59) {
+          seconds = (parseInt(seconds) - 60).toString();
+          minutes = (parseInt(minutes) + 1).toString();
+        }
+        let newNotification = document.createElement('div');
+        newNotification.classList.add(`notification-${userstate["display-name"]}`);
+        newNotification.id = 'notification'
+        newNotification.innerHTML = `<span class="notification-message">${userstate.bits} bits offerts par ${userstate["display-name"]}</span>`
+        cheerathonContainer.appendChild(newNotification);
+        //let selectNewNotification = document.querySelector(`.notification-${userstate["display-name"]}`) as HTMLElement;
+        newNotification.style.display = 'flex';
+        setTimeout(() => {
+          newNotification.style.opacity = '1';
+        }, 500)
+        setTimeout(() => {
+          newNotification.innerHTML = `<span class="notification-message">+ ${calcBits(tempsInitial, userstate.bits)}</span>`
+        }, 3000)
+        setTimeout(() => {
+          newNotification.style.opacity = '0';
+        }, 7000);
+        setTimeout(() => {
+          newNotification.style.display = 'none';
+        }, 500);
+        localStorage.removeItem(key);
+      }
+    }
+  }
+};
 
 // Function qui décrémente le temps et qui change les autres valeurs en fonction des conditions présentes dans la fonction
 const timer = () => {
@@ -131,9 +193,11 @@ const showTime = () => {
   localStorage.setItem('hours', hours);
   localStorage.setItem('minutes', minutes);
   localStorage.setItem('seconds', seconds);
+  verifNewBits()
   if (parseInt(hours) <= 0 && parseInt(minutes) <= 0 && parseInt(seconds) <= 0) {
     clearInterval(intervalId);
   }
 };
+
 
 let intervalId = setInterval(showTime, 1000);
