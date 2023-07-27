@@ -1,8 +1,6 @@
 const hoursShow = document.querySelector('.hours');
 const minutesShow = document.querySelector('.minutes');
 const secondsShow = document.querySelector('.seconds');
-const notificationMessage = document.querySelector('.notification-message');
-const notification = document.querySelector('.notification') as HTMLElement;
 const cheerathonContainer = document.querySelector('.cheerathon-container') as HTMLElement;
 
 let hours = '';
@@ -101,28 +99,6 @@ client.on('cheer', (_channel, userstate) => {
   } else if (localStorage.getItem(`${userstate["display-name"]}-5`) !== null) {
     localStorage.setItem(`${userstate["display-name"]}-6`, `${userstate["display-name"]} - ${userstate.bits}`);
   }
-  // let addedTime = calcBits(tempsInitial, userstate.bits).split(':');
-  // hours = (parseInt(hours) + parseInt(removeLeadingZero(addedTime[0]))).toString();
-  // minutes = (parseInt(minutes) + parseInt(removeLeadingZero(addedTime[1]))).toString();
-  // if (parseInt(minutes) > 59) {
-  //   minutes = (parseInt(minutes) - 60).toString();
-  //   hours = (parseInt(hours) + 1).toString();
-  // }
-  // seconds = (parseInt(seconds) + parseInt(removeLeadingZero(addedTime[2]))).toString();
-  // if (parseInt(seconds) > 59) {
-  //   seconds = (parseInt(seconds) - 60).toString();
-  //   minutes = (parseInt(minutes) + 1).toString();
-  // }
-  // notificationMessage.innerHTML = `${userstate.bits} bits offerts par ${userstate["display-name"]}`
-  // notification.style.transform = 'translateY(0)';
-  // notification.style.opacity = '1';
-  // setTimeout(() => {
-  //   notificationMessage.innerHTML = `+ ${calcBits(tempsInitial, userstate.bits)}`
-  // }, 3000)
-  // setTimeout(() => {
-  //   notification.style.transform = 'translateY(50%)';
-  //   notification.style.opacity = '0';
-  // }, 7000);
 });
 
 const verifNewBits = async () => {
@@ -131,7 +107,7 @@ const verifNewBits = async () => {
       if (localStorage.hasOwnProperty(key)) {
         let value = localStorage.getItem(key);
         let userstate = {
-          "display-name": key,
+          "display-name": value.split(' - ')[0],
           bits: value.split(' - ')[1]
         };
         let addedTime = calcBits(tempsInitial, userstate.bits).split(':');
@@ -151,20 +127,19 @@ const verifNewBits = async () => {
         newNotification.id = 'notification'
         newNotification.innerHTML = `<span class="notification-message">${userstate.bits} bits offerts par ${userstate["display-name"]}</span>`
         cheerathonContainer.appendChild(newNotification);
-        //let selectNewNotification = document.querySelector(`.notification-${userstate["display-name"]}`) as HTMLElement;
-        newNotification.style.display = 'flex';
         setTimeout(() => {
+          newNotification.style.display = 'flex';
           newNotification.style.opacity = '1';
         }, 500)
         setTimeout(() => {
-          newNotification.innerHTML = `<span class="notification-message">+ ${calcBits(tempsInitial, userstate.bits)}</span>`
-        }, 3000)
+          newNotification.innerHTML = `<span class="notification-message">+ 01:30:00</span>`
+        }, 5000)
         setTimeout(() => {
           newNotification.style.opacity = '0';
         }, 7000);
         setTimeout(() => {
           newNotification.style.display = 'none';
-        }, 500);
+        }, 7500);
         localStorage.removeItem(key);
       }
     }
