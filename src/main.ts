@@ -132,7 +132,7 @@ const verifNewBits = async () => {
           newNotification.style.opacity = '1';
         }, 500)
         setTimeout(() => {
-          newNotification.innerHTML = `<span class="notification-message">+ 01:30:00</span>`
+          newNotification.innerHTML = `<span class="notification-message">+ ${calcBits(tempsInitial, userstate.bits)}</span>`
         }, 5000)
         setTimeout(() => {
           newNotification.style.opacity = '0';
